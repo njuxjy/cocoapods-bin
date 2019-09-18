@@ -42,7 +42,7 @@ module CBin
 
       def build_sim_libraries(defines)
         UI.message 'Building simulator libraries'
-        xcodebuild(defines, '-sdk iphonesimulator', 'build-simulator')
+        xcodebuild(defines, '-sdk iphonesimulator ARCHS=\'x86_64\'', 'build-simulator')
       end
 
       def copy_headers
@@ -140,7 +140,7 @@ module CBin
       end
 
       def ios_architectures
-        archs = %w(x86_64 arm64 armv7 armv7s i386)
+        archs = %w(x86_64 arm64 armv7)
         @vendored_libraries.each do |library|
           archs = `lipo -info #{library}`.split & archs
         end
