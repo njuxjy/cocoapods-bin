@@ -115,7 +115,13 @@ module CBin
         end
         if resources.count > 0
           UI.message "Copying resources #{resources}"
-          `cp -rp #{resources.join(' ')} #{framework.resources_path}`
+          resources.each do |resource_list|
+            resource_list.each do |resource|
+              destination = Pathname.new(framework.resources_path) + Pathname.new(resource).relative_path_from(Pathname.new(@source_dir))
+              `mkdir -p #{destination.parent}`
+              `cp -rp #{resource} #{destination}`
+            end
+          end
         end
       end
 

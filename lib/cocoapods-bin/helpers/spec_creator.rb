@@ -62,7 +62,7 @@ module CBin
         # Resources
         extnames = []
         extnames << '*.bundle' if code_spec_consumer.resource_bundles.any?
-        extnames += code_spec_consumer.resources.map { |r| File.basename(r) } if code_spec_consumer.resources.any?
+        extnames += code_spec_consumer.resources if code_spec_consumer.resources.any?
         @spec.resources = framework_contents('Resources').flat_map { |r| extnames.map { |e| "#{r}/#{e}" } } if extnames.any?
 
         # Source Location
