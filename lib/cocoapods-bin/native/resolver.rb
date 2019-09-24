@@ -131,7 +131,33 @@ module Pod
               rspec
             rescue Pod::StandardError => error  
               # 没有从新的 source 找到对应版本组件，直接返回原 rspec
-              missing_binary_specs << rspec.spec if use_binary
+              if use_binary
+                missing_binary_specs << rspec.spec
+              else 
+                found_source_spec = false
+                sources_manager.code_source_backups.each do |source| 
+                  begin
+                    specification = source.specification(rspec.root.name, spec_version)   
+      
+                    specification = specification.subspec_by_name(rspec.name, false, true) if rspec.spec.subspec?
+                    next unless specification
+      
+                    if Pod.match_version?('~> 1.7')
+                      used_by_only = rspec.used_by_non_library_targets_only
+                    else
+                      used_by_only = rspec.used_by_tests_only
+                    end
+                    rspec = if Pod.match_version?('~> 1.4.0')
+                              ResolverSpecification.new(specification, used_by_only)
+                            else
+                              ResolverSpecification.new(specification, used_by_only, source)
+                            end
+                    rspec
+                  rescue Pod::StandardError => error  
+                  end
+                  rspec 
+                end
+              end
               rspec
             end
 
